@@ -10,3 +10,4 @@ psycopg2-binary
 PyJWT
 python-multipart==0.0.32
 bcrypt==5.0.0
+psycopg
