@@ -1,12 +1,13 @@
 from requests import HTTPError
-
+from os import getenv
 from database import data
 import requests
 
 from routers.todos.todo_router import CreateTodoRequest
 
 todos = data.todos
-API_URL = "https://fast-api-todo-agent.onrender.com"
+
+API_URL = getenv("API_BASE_PATH")
 
 def get_all_todos(token: str):
     response = requests.get(f"{API_URL}/todos/", headers={"Authorization": f"Bearer {token}"},)
