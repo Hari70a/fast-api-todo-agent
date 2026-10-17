@@ -1,0 +1,32 @@
+sdk_http_response=HttpResponse(
+  headers=<dict len=12>
+) candidates=[Candidate(
+  content=Content(
+    parts=[
+      Part(
+        function_call=FunctionCall(
+          args={
+            'description': 'Study Retrieval-Augmented Generation (RAG) techniques, build a prototype, and evaluate performance to understand how to ground LLMs with external data.',
+            'todo_id': '6'
+          },
+          id='call_994865',
+          name='update_todo'
+        ),
+        thought_signature=b'\x12s\nq\x01i\x14}\x13\xa8\xc3\xc6\x1e\xd0^o\xabb\x85\xd3\xd1MCOL|?\xcdX;?\x9f]\x84\x0b2\x01\x027\xda\xf1H\x1dlB\xc0\xbb! \xf1\xa5\x9ch\x9c\x97\x8d"y\x83\xaei\x9e`\x14/\x827W\xdb\xc1D>\x08\xe5\x1a\xdf]\x91\x13\r\x93\x96s\xc6\xf0\x84\xfb%\xa2w\x1c\xeb\xd1\xe6\xa5\x97\xb5...'
+      ),
+    ],
+    role='model'
+  ),
+  finish_reason=<FinishReason.STOP: 'STOP'>,
+  index=0
+)] create_time=None model_version='gemini-3.1-flash-lite' prompt_feedback=None response_id='O8nMatjzGbamg8UPwavG0QY' usage_metadata=GenerateContentResponseUsageMetadata(
+  candidates_token_count=53,
+  prompt_token_count=494,
+  prompt_tokens_details=[
+    ModalityTokenCount(
+      modality=<MediaModality.TEXT: 'TEXT'>,
+      token_count=494
+    ),
+  ],
+  total_token_count=547
+) model_status=None automatic_function_calling_history=None parsed=None

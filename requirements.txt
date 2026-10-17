@@ -1,0 +1,12 @@
+pydantic
+python-jose
+google-genai
+python-dotenv
+fastapi
+uvicorn[standard]
+starlette
+sqlalchemy
+psycopg2-binary
+PyJWT
+python-multipart==0.0.32
+bcrypt==5.0.0
