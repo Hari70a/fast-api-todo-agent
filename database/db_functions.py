@@ -6,7 +6,7 @@ import requests
 from routers.todos.todo_router import CreateTodoRequest
 
 todos = data.todos
-API_URL = "http://localhost:8000"
+API_URL = "https://fast-api-todo-agent.onrender.com"
 
 def get_all_todos(token: str):
     response = requests.get(f"{API_URL}/todos/", headers={"Authorization": f"Bearer {token}"},)
