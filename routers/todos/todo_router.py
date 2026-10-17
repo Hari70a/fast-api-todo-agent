@@ -55,7 +55,7 @@ async def add_new_todo(user: user_dependency, db: db_dependency, create_todo_req
 
 
 @router.put("/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def update_todo(user: user_dependency, db: db_dependency, update_todo_request: UpdateTodoRequest, todo_id: str):
+async def update_todo(user: user_dependency, db: db_dependency, update_todo_request: UpdateTodoRequest, todo_id: int):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication Failed")
     todo_to_update = db.query(Todos).filter(Todos.id == todo_id, Todos.owner_id == user["id"]).first()
@@ -81,7 +81,7 @@ async def update_todo(user: user_dependency, db: db_dependency, update_todo_requ
 
 
 @router.delete("/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_todo(user: user_dependency, db: db_dependency, todo_id: str):
+async def delete_todo(user: user_dependency, db: db_dependency, todo_id: int):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication Failed")
     todo_to_delete = db.query(Todos).filter(Todos.id == todo_id, Todos.owner_id == user["id"]).first()

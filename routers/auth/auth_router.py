@@ -44,6 +44,7 @@ async def create_user(db: db_dependency, create_user_request: CreateUserRequest)
         phone_number = create_user_request.phone_number
     )
 
+    db.add(create_user_model)
     db.commit()
 
 @router.post("/login", response_model=LoginWithToken)

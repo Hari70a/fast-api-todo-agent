@@ -19,7 +19,7 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 SECRET_KEY = getenv("BASE64_SECRET_KEY")
 ALGORITHM = "HS256"
 
-oauth2bearer = OAuth2PasswordBearer(tokenUrl="/auth/token")
+oauth2bearer = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 def _password_digest(password: str) -> bytes:
     return hashlib.sha256(password.encode("utf-8")).digest()
