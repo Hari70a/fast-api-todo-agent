@@ -59,7 +59,7 @@ async def login_with_token(response: Response, form_data: Annotated[OAuth2Passwo
             value=refresh_token,
             httponly=True,
             secure=True, # for HTTPS only
-            samesite="strict",  # prevents CSRF attacks
+            samesite="none",  # UI and API are on different sites (onrender.com is a public suffix)
             path="/auth",
             max_age=7*24*60*60,  # 7 days in seconds
         )
@@ -85,8 +85,8 @@ async def refresh_authentication(response: Response, db: db_dependency, refresh_
         key="refresh_token",
         value=new_refresh_token,
         httponly=True,
-        # secure=True, # for HTTPS only
-        samesite="lax",  # prevents CSRF attacks
+        secure=True, # for HTTPS only
+        samesite="none",  # UI and API are on different sites (onrender.com is a public suffix)
         path="/auth",
         max_age=7*24*60*60,  # 7 days in seconds
     )
