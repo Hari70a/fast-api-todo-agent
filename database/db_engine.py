@@ -14,7 +14,9 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 if getenv("MODE") == "production":
     engine = create_engine(
-        getenv("DATABASE_URL")
+        getenv("DATABASE_URL"),
+        pool_pre_ping=True,
+        pool_recycle=300,        # Neon pooler drops idle conns
     )
 else:
     CREATE_DATABASE_URL = URL.create(

@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+import time
+
+from fastapi import FastAPI, Request
 
 from database.db_engine import engine, Base
 from routers.auth import auth_router
@@ -17,6 +19,20 @@ app.add_middleware(
 )
 
 Base.metadata.create_all(bind=engine)
+
+@app.middleware("http")
+async def measure_request_time(request: Request, call_next):
+    start_time = time.perf_counter()
+
+    response = await call_next(request)
+
+    process_time = time.perf_counter() - start_time
+
+    print(f"Request took {process_time:.4f} seconds")
+
+    response.headers["X-Process-Time"] = str(process_time)
+
+    return response
 
 @app.get("/healthy")
 def health_check():

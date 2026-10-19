@@ -53,16 +53,17 @@ async def login_with_token(response: Response, form_data: Annotated[OAuth2Passwo
 
     if authenticated_user:
         access_token = create_access_token(authenticated_user.username, authenticated_user.id, authenticated_user.role, timedelta(minutes=15))
-        refresh_token = create_refresh_token(authenticated_user.id, timedelta(days=7), db)
-        response.set_cookie(
-            key="refresh_token",
-            value=refresh_token,
-            httponly=True,
-            secure=True, # for HTTPS only
-            samesite="none",  # UI and API are on different sites (onrender.com is a public suffix)
-            path="/auth",
-            max_age=7*24*60*60,  # 7 days in seconds
-        )
+
+        # refresh_token = create_refresh_token(authenticated_user.id, timedelta(days=7), db)
+        # response.set_cookie(
+        #     key="refresh_token",
+        #     value=refresh_token,
+        #     httponly=True,
+        #     secure=True, # for HTTPS only
+        #     samesite="none",  # UI and API are on different sites (onrender.com is a public suffix)
+        #     path="/auth",
+        #     max_age=7*24*60*60,  # 7 days in seconds
+        # )
         return {
             "access_token": access_token,
             "token_type": "bearer"
