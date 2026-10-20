@@ -4,12 +4,14 @@ from typing import Annotated
 from fastapi import APIRouter, Cookie, Depends, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
+from sqlalchemy import or_
 from starlette import status
 from starlette.exceptions import HTTPException
 
 from database.db_models.users import Users
 from database.db_utils.db_dependency import db_dependency
-from routers.auth.auth_utils import authenticate_user, create_access_token, hash_password
+from routers.auth.auth_types import CreateUserRequest, LoginWithToken
+from routers.auth.auth_utils import authenticate_user, create_access_token, hash_password, validate_existing_user
 from routers.auth.refresh_token_utils import create_refresh_token, validate_refresh_token, revoke_token
 
 router = APIRouter(
@@ -17,22 +19,15 @@ router = APIRouter(
     tags=["auth"]
 )
 
-class CreateUserRequest(BaseModel):
-    email:str
-    username:str
-    first_name:str
-    last_name:str
-    password:str
-    role:str
-    phone_number:str
-
-class LoginWithToken(BaseModel):
-    access_token: str
-    token_type: str
-
-
 @router.post("/sign-up", status_code=status.HTTP_201_CREATED)
 async def create_user(db: db_dependency, create_user_request: CreateUserRequest):
+    existing_user = validate_existing_user(db, create_user_request)
+
+    if existing_user:
+        raise HTTPException(
+            status_code=400,
+            detail="Username or email already exists"
+        )
     create_user_model = Users(
         email = create_user_request.email,
         username= create_user_request.username,

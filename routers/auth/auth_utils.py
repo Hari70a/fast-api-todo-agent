@@ -11,9 +11,11 @@ from fastapi import HTTPException
 from fastapi.params import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
+from sqlalchemy import or_
 from starlette import status
 
 from database.db_models.users import Users
+from routers.auth.auth_types import CreateUserRequest
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 SECRET_KEY = getenv("BASE64_SECRET_KEY")
@@ -102,3 +104,12 @@ def validate_refresh_token(token: str):
 
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
+    
+
+def validate_existing_user(db, request: CreateUserRequest):
+    return db.query(Users).filter(
+        or_(
+            Users.username == request.username,
+            Users.email == request.email
+        )
+    )
