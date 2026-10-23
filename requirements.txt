@@ -1,3 +1,5 @@
+requests
+requests
 pydantic
 python-jose
 google-genai
@@ -11,3 +13,5 @@ PyJWT
 python-multipart==0.0.32
 bcrypt==5.0.0
 psycopg
+alembic
+requests

@@ -9,7 +9,7 @@ import hmac
 from fastapi import HTTPException
 from starlette import status
 
-from database.db_models.RefreshToken import RefreshToken
+from database.db_models.refresh_token import RefreshToken
 from database.db_models.users import Users
 from database.db_utils.db_dependency import db_dependency
 from routers.auth.auth_utils import ALGORITHM

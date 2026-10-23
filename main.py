@@ -1,6 +1,8 @@
 import time
 
 from fastapi import FastAPI, Request
+# from fastapi.exceptions import RequestValidationError
+# from starlette.responses import JSONResponse
 
 from database.db_engine import engine, Base
 from routers.auth import auth_router
@@ -33,6 +35,21 @@ async def measure_request_time(request: Request, call_next):
     response.headers["X-Process-Time"] = str(process_time)
 
     return response
+
+# Using the below handler, we can customize the JSONResponse
+# @app.exception_handler(RequestValidationError)
+# async def validation_exception_handler(
+#     request: Request,
+#     exc: RequestValidationError
+# ):
+#     return JSONResponse(
+#         status_code=422,
+#         content={
+#             "success": False,
+#             "message": "Validation failed",
+#             "errors": exc.errors()
+#         }
+#     )
 
 @app.get("/healthy")
 def health_check():

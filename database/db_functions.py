@@ -1,21 +1,22 @@
-from requests import HTTPError
 from os import getenv
-from database import data
+
+from starlette import status
+from starlette.exceptions import HTTPException
+
 import requests
-
-from routers.todos.todo_router import CreateTodoRequest
-
-todos = data.todos
 
 API_URL = getenv("API_BASE_PATH")
 
 def get_all_todos(token: str):
     response = requests.get(f"{API_URL}/todos/", headers={"Authorization": f"Bearer {token}"},)
-
-    response.raise_for_status()
-
-    response_data = response.json()
-    return response_data
+    try:
+        response.raise_for_status()
+        response_data = response.json()
+        return response_data
+    except requests.exceptions.HTTPError:
+        error = response.json()["detail"]
+        if response.status_code == status.HTTP_401_UNAUTHORIZED:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=error)
 
 
 def add_todo(token: str, new_task_data):
@@ -28,21 +29,20 @@ def add_todo(token: str, new_task_data):
         },
         json=new_task_data
     )
-    # if new_task is None:
-    #     new_task = {ˀ
-    #         "title": "Learn AI",
-    #         "status": "pending",ˀ
-    #         "priority": 3.
-    #     }
-    # new_task["id"] = len(todos) + 1ˀ
-    # todos.append(new_task)
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        detail = response.json()["detail"]
+        if response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT:
+            print(detail, "422 error details")
+            response_data= detail[0]
+            error = response_data["msg"].replace("String", response_data["loc"][1].title())
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=error)
+        elif response.status_code == status.HTTP_401_UNAUTHORIZED:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=detail)
+        else:
+            raise
 
-    response.raise_for_status()
-
-    return {
-        "message": "Todo created successfully",
-        "status_code": response.status_code,
-    }
 
 def update_todo(token: str, update_task_data):
     payload = {
@@ -58,27 +58,22 @@ def update_todo(token: str, update_task_data):
         },
         json=payload
     )
-    print("Status:", response.status_code)
-    print("Response:", response.text)
-    print("Payload:", payload)
-    # if new_task is None:
-    #     new_task = {ˀ
-    #         "title": "Learn AI",
-    #         "status": "pending",ˀ
-    #         "priority": 3.
-    #     }
-    # new_task["id"] = len(todos) + 1ˀ
-    # todos.append(new_task)
-
-    response.raise_for_status()
-
-    return {
-        "message": f"Todo {update_task_data['todo_id']} is updated successfully",
-        "status_code": response.status_code,
-    }
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        detail = response.json()["detail"]
+        if response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT:
+            print(detail, "422 error details")
+            response_data= detail[0]
+            error = response_data["msg"].replace("String", response_data["loc"][1].title())
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=error)
+        elif response.status_code == status.HTTP_401_UNAUTHORIZED:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=detail)
+        else:
+            raise
 
 def delete_todo(token: str, todo_id: str):
-    print(todo_id, "Todo isshfjdhfhfgh %$$$$$")
+    print(todo_id, "Todo id %$$$$$")
     response = requests.delete(
         f"{API_URL}/todos/{todo_id}",
         headers={
@@ -86,28 +81,20 @@ def delete_todo(token: str, todo_id: str):
             "Content-Type": "application/json",
         },
     )
-    print("Status:", response.status_code)
-    print("Response:", response.text)
-    # if new_task is None:
-    #     new_task = {ˀ
-    #         "title": "Learn AI",
-    #         "status": "pending",ˀ
-    #         "priority": 3.
-    #     }
-    # new_task["id"] = len(todos) + 1ˀ
-    # todos.append(new_task)
 
-    response.raise_for_status()
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        error = response.json()["detail"]
+        if response.status_code == status.HTTP_404_NOT_FOUND:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=error)
+        elif response.status_code == status.HTTP_401_UNAUTHORIZED:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=error)
+        else:
+            raise
 
     return {
         "message": f"Todo {todo_id} is deleted successfully",
         "status_code": response.status_code,
     }
 
-
-
-def complete_todo(id):
-    for todo in todos:
-        if todo["id"] == id:
-            todo["status"] = "Completed"
-            break

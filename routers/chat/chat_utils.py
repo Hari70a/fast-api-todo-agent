@@ -110,6 +110,7 @@ def generate_content_stream(
     chat_id: str | None = None
 ) -> Generator[str]:
     #  Testing streams using SSE events below
+    # Simple example for SSE
     # text1 = "Starting"
     # text2 = "content"
     # text3 = "generation..."
@@ -174,4 +175,6 @@ def generate_content_stream(
         yield form_server_sent_event({"type": "done", "chat_id": chat_id})
 
     except Exception as e:
-        yield form_server_sent_event({"type": "error", "text": str(e)})
+        print(e, "Exception in chat utils")
+        error = str(e).split(": ")[1]
+        yield form_server_sent_event({"type": "error", "text": error})
