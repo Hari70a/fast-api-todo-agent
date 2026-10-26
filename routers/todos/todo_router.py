@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from fastapi import APIRouter, HTTPException, params
 from pydantic import BaseModel, Field
 from starlette import status
@@ -67,7 +69,10 @@ async def update_todo(user: user_dependency, db: db_dependency, update_todo_requ
     # Approach 1: Using loop of items and set attributes
     for field, value in update_todo_request.model_dump(exclude_unset=True).items():
         setattr(todo_to_update, field, value)
-    setattr(todo_to_update, "owner_id", user["id"])
+        if field == "complete" and value == True:
+            setattr(todo_to_update, "owner_id", user["id"])
+
+    setattr(todo_to_update, "completed_at", datetime.now(timezone.utc))
 
     # Approach 2: Direct updates using dot operator
     # todo_to_update.title = update_todo_request.title
