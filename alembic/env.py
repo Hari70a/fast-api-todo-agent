@@ -1,7 +1,5 @@
 import os
 from logging.config import fileConfig
-from os import getenv
-from urllib.parse import quote_plus
 
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, URL
@@ -10,6 +8,11 @@ from sqlalchemy import pool
 from alembic import context
 
 from database.db_engine import Base
+#Important to add these models(though unused) so that alembic understands the existing schemas
+from database.db_models.users import Users
+from database.db_models.todos import Todos
+from database.db_models.conversations import Conversations
+from database.db_models.user_memories import UserMemories
 
 load_dotenv()
 # this is the Alembic Config object, which provides
@@ -30,7 +33,14 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
+print("Base:", Base)
+print("Metadata:", Base.metadata)
+print("Tables:", list(Base.metadata.tables.keys()))
 target_metadata = Base.metadata
+
+print("SQLAlchemy tables:")
+for table in target_metadata.sorted_tables:
+    print(" -", table.fullname)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -55,6 +65,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        include_schemas=True
     )
 
     with context.begin_transaction():
@@ -75,8 +86,11 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
+        print("Alembic connected to:", connection.engine.url)
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata,
+            include_schemas=True
         )
 
         with context.begin_transaction():

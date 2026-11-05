@@ -2,7 +2,6 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
-from google.genai.errors import ServerError
 from pydantic import BaseModel
 from starlette import status
 

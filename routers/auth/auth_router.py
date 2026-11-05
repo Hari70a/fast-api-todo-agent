@@ -3,13 +3,13 @@ from typing import Annotated
 
 from fastapi import APIRouter, Cookie, Depends, Response
 from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import BaseModel
-from sqlalchemy import or_
+from pydantic import BaseModel, ConfigDict
 from starlette import status
 from starlette.exceptions import HTTPException
 
 from database.db_models.users import Users
 from database.db_utils.db_dependency import db_dependency
+from database.db_utils.user_dependency import user_dependency
 from routers.auth.auth_types import CreateUserRequest, LoginWithToken
 from routers.auth.auth_utils import authenticate_user, create_access_token, hash_password, validate_existing_user
 from routers.auth.refresh_token_utils import create_refresh_token, validate_refresh_token, revoke_token
@@ -18,6 +18,16 @@ router = APIRouter(
     prefix="/auth",
     tags=["auth"]
 )
+
+class UserProfileResponse(BaseModel):
+    id: int
+    username: str
+    email: str
+    first_name: str
+    last_name: str
+    phone_number: str
+
+    model_config = ConfigDict(from_attributes=True) # "This Pydantic model is allowed to be created from objects by reading their attributes."ˀ
 
 @router.post("/sign-up", status_code=status.HTTP_201_CREATED)
 async def create_user(db: db_dependency, create_user_request: CreateUserRequest):
@@ -90,3 +100,7 @@ async def refresh_authentication(response: Response, db: db_dependency, refresh_
         "access_token": new_access_token,
         "token_type": "bearer"
     }
+
+@router.get("/user-profile", status_code=status.HTTP_200_OK, response_model=UserProfileResponse)
+async def get_user_profile(db: db_dependency, user: user_dependency):
+    return db.query(Users).filter(Users.id == user["id"]).first()

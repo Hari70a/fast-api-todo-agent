@@ -15,3 +15,6 @@ bcrypt==5.0.0
 psycopg
 alembic
 requests
+mem0ai
+numpy
+pgvector
