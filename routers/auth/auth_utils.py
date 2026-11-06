@@ -112,4 +112,4 @@ def validate_existing_user(db, request: CreateUserRequest):
             Users.username == request.username,
             Users.email == request.email
         )
-    )
+    ).first()
